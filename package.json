@@ -1,0 +1,89 @@
+{
+  "name": "braze-segment-dedupe",
+  "version": "0.0.0-development",
+  "description": "Segment utilities to deduplicate data before it reaches the Braze destination",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "lint": "eslint '{*,{lib,docs}/**/*,__{tests,mocks}__/**/*}.js' || true",
+    "pretty": "prettier --write '{*,{lib,docs,.github}/**/*,__{tests,mocks}__/**/*}.{json,md,yml,js}'",
+    "fixcode": "yarn run pretty",
+    "semantic-release": "semantic-release",
+    "release": "yarn run semantic-release",
+    "release-ci": "echo 'unsafe-perm = true' > ./.npmrc && yarn run semantic-release && rm -rf ./.npmrc",
+    "commit": "git-cz",
+    "prepare": "husky install"
+  },
+  "repository": "https://github.com/nursefly/braze-segment-dedupe",
+  "author": "Andres Restrepo <andres@thelinuxkid.com>",
+  "contributors": [
+    {
+      "name": "Brandon Phillips",
+      "email": "bericp1@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "lib",
+    ".eslintignore",
+    ".eslintrc.json",
+    ".gitignore",
+    ".prettierignore",
+    ".prettierrc.json",
+    "index.js",
+    "jest.config.js",
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "yarn.lock"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "front-matter": "^4.0.2",
+    "husky": "^7.0.1",
+    "jest": "^27.0.6",
+    "lint-staged": "^11.1.2",
+    "marked": "^3.0.0",
+    "prettier": "^2.3.2",
+    "semantic-release": "^17.4.5"
+  },
+  "engines": {
+    "node": ">=12.22.4"
+  },
+  "lint-staged": {
+    "{*,{lib,docs}/**/*,__{tests,mocks}__/**/*}.js": [
+      "prettier --write",
+      "eslint"
+    ],
+    "{*,{lib,docs,.github}/**/*,__{tests,mocks}__/**/*}.{json,md,yml}": [
+      "prettier --write"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "dependencies": {
+    "debug": "^4.3.2",
+    "verror": "^1.10.0"
+  }
+}
