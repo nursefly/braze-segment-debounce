@@ -84,6 +84,7 @@
   },
   "dependencies": {
     "debug": "^4.3.2",
+    "lodash": "^4.17.21",
     "verror": "^1.10.0"
   }
 }
