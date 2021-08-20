@@ -1,7 +1,7 @@
 {
-  "name": "braze-segment-dedupe",
+  "name": "braze-segment-debounce",
   "version": "0.0.0-development",
-  "description": "Segment utilities to deduplicate data before it reaches the Braze destination",
+  "description": "Segment utilities to debounce data before it reaches the Braze destination",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -16,7 +16,7 @@
     "commit": "git-cz",
     "prepare": "husky install"
   },
-  "repository": "https://github.com/nursefly/braze-segment-dedupe",
+  "repository": "https://github.com/nursefly/braze-segment-debounce",
   "author": "Andres Restrepo <andres@thelinuxkid.com>",
   "contributors": [
     {

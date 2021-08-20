@@ -1,6 +1,6 @@
-# braze-segment-dedupe
+# braze-segment-debounce
 
-Segment utilities to deduplicate data before it reaches the Braze destination
+Segment utilities to debounce data before it reaches the Braze destination
 
 ## Introduction
 
@@ -29,16 +29,16 @@ to incur costs, but the functions can be applied to any call type.
 
 ## Usage
 
-`braze-segment-dedupe` supports deduping for both `web` and `server`. Only
+`braze-segment-debounce` supports debouncing for both `web` and `server`. Only
 JavaScript/NodeJS is supported on the server side. The mechanisms for `web`
 and `server` are similar but have a few, important distinctions. The
-package exposes three main functions, `dedupePayloads` (base),
-`dedupePayloadSync` (web), `dedupePayload` (server).
+package exposes three main functions, `debouncePayloads` (base),
+`debouncePayloadSync` (web), `debouncePayload` (server).
 
 ### Base
 
-`dedupePayloads` is a base function used by `web` and `server` which takes
-two payloads and runs them through the deduping algorithm.
+`debouncePayloads` is a base function used by `web` and `server` which takes
+two payloads and runs them through the debouncing algorithm.
 
 #### Arguments
 
@@ -60,26 +60,26 @@ two payloads and runs them through the deduping algorithm.
 #### Example
 
 ```
-  const { nextPayload, newOrUpdatedTraits } = dedupePayloads(
+  const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
     previousPayload,
     sanitizedPayload,
     (payload, prop) => _get(payload, `obj.${prop}`),
   );
   if (nextPayload) {
-    const dedupedPayload = {
+    const debouncedPayload = {
       ...nextPayload,
       obj: {
         ...nextPayload.obj,
         traits: newOrUpdatedTraits || nextPayload.obj.traits,
       },
     };
-    // do something smart with `dedupedPayload`
+    // do something smart with `debouncedPayload`
   }
 ```
 
 #### Note
 
-`dedupePayloads` does not need to be used in most cases, but is exposed to
+`debouncePayloads` does not need to be used in most cases, but is exposed to
 provide the user with flexibility if she/he needs to expand/replace the
 functionality provided by `web` and `server`.
 
@@ -93,8 +93,8 @@ Please note that this integration has been tested in production using
 2.0](https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/)
 and we don't recommend using the previous version of Analytics.js.
 
-`dedupePayloadSync` provides a full solution that integrates with the
-Analytics.js Source Middleware to dedupe data being before it is sent to
+`debouncePayloadSync` provides a full solution that integrates with the
+Analytics.js Source Middleware to debounce data being before it is sent to
 the Braze destination. It stores previous payloads in `localStorage`, or a
 similar solution which you can override, and compares the `payload`
 provided by this middleware against the previous versions to only send new
@@ -108,7 +108,7 @@ or updated `traits`.
 
 #### Returns
 
-- `nextPayload || null`: the deduped payload to send to Braze. If `null`,
+- `nextPayload || null`: the debounced payload to send to Braze. If `null`,
   there is no new or updated data to send.
 
 #### Example
@@ -120,7 +120,7 @@ or updated `traits`.
       next(payload);
       return;
     }
-    const identifyPayload = dedupePayloadSync(payload);
+    const identifyPayload = debouncePayloadSync(payload);
     if (identifyPayload) {
       next(identifyPayload);
     }
@@ -147,7 +147,7 @@ against the previous versions to only send new or updated `traits`.
 
 #### Returns
 
-- `nextPayload || null`: the deduped payload to send to Braze. If `null`,
+- `nextPayload || null`: the debounced payload to send to Braze. If `null`,
   there is no new or updated data to send.
 
 #### Example
@@ -156,7 +156,7 @@ against the previous versions to only send new or updated `traits`.
 import _isNil from 'lodash/isNil';
 import Analytics from 'analytics-node';
 import memjs from 'memjs';
-import { dedupePayload } from 'braze-segment-dedupe';
+import { debouncePayload } from 'braze-segment-debounce';
 
 const cache = memjs.Client.create();
 const analytics = new Analytics(segmentWriteKey);
@@ -167,7 +167,7 @@ const persistPayload = async (k, v) => {
 
 const identifyWithDebounce = async (payload) => {
   // TODO filter Braze integration, called `AppBoy`, if possible
-  const identifyPayload = await dedupePayload(
+  const identifyPayload = await debouncePayload(
     payload,
     fetchPayload,
     persistPayload,
