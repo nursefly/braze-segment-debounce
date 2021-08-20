@@ -95,11 +95,11 @@ Please note that this integration has been tested in production using
 and we don't recommend using the previous version of Analytics.js.
 
 `debouncePayloadSync` provides a full solution that integrates with the
-Analytics.js Source Middleware to debounce data being before it is sent to
+Analytics.js Source Middleware to debounce data before it is sent to
 the Braze destination. It stores previous payloads in `localStorage`, or a
 similar solution which you can override, and compares the `payload`
-provided by this middleware against the previous versions to only send new
-or updated `traits`.
+provided by this middleware against the previous versions so that it only
+sends new or updated `traits`.
 
 #### Arguments
 
@@ -136,8 +136,8 @@ or updated `traits`.
 require middleware like the frontend but it does rely on a caching or
 storage mechanism that the user provides. Similar to `web`, it stores
 previous payloads using the storage mechanism, and compares the `payload`
-to be sent to Segment/Braze against the previous versions to only send new
-or updated `traits`.
+to be sent to Segment/Braze against the previous versions so that it only
+sends new or updated `traits`.
 
 #### Arguments
 
@@ -185,4 +185,4 @@ const identifyWithDebounce = async (payload) => {
 ## TODO
 
 - [ ] Add details on how to debounce payload only for Braze, known as
-      Appboy in the integration.
+      AppBoy in the integration.
