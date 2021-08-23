@@ -82,6 +82,11 @@
       "@commitlint/config-conventional"
     ]
   },
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
   "dependencies": {
     "debug": "^4.3.2",
     "lodash": "^4.17.21"
