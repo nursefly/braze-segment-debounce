@@ -61,6 +61,8 @@ two payloads and runs them through the debouncing algorithm.
 #### Example
 
 ```js
+import { debouncePayloads } from 'braze-segment-debounce';
+
 const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
   previousPayload,
   sanitizedPayload,
@@ -115,6 +117,8 @@ sends new or updated `traits`.
 #### Example
 
 ```js
+import { debouncePayloadSync } from 'braze-segment-debounce/web';
+
 const _identifyDebounceSourceMiddleware = ({ payload, next, integrations }) => {
   // TODO filter Braze integration, called `AppBoy`
   if (payload.type() !== 'identify') {
@@ -158,7 +162,7 @@ sends new or updated `traits`.
 import _isNil from 'lodash/isNil';
 import Analytics from 'analytics-node';
 import memjs from 'memjs';
-import { debouncePayload } from 'braze-segment-debounce';
+import { debouncePayload } from 'braze-segment-debounce/server';
 
 const segmentWriteKey = 'YOUR-SEGMENT-WRITE-KEY';
 const analytics = new Analytics(segmentWriteKey);
