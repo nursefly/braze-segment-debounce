@@ -52,11 +52,9 @@
     "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "front-matter": "^4.0.2",
     "husky": "^7.0.1",
     "jest": "^27.0.6",
     "lint-staged": "^11.1.2",
-    "marked": "^3.0.0",
     "prettier": "^2.3.2",
     "semantic-release": "^17.4.5"
   },
@@ -84,7 +82,6 @@
   },
   "dependencies": {
     "debug": "^4.3.2",
-    "lodash": "^4.17.21",
-    "verror": "^1.10.0"
+    "lodash": "^4.17.21"
   }
 }
