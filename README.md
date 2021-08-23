@@ -30,15 +30,15 @@ to incur costs, but the functions can be applied to any call type.
 
 ## Usage
 
-`braze-segment-debounce` supports debouncing for both `web` and `server`. Only
-JavaScript/NodeJS is supported on the server side. The mechanisms for `web`
+`braze-segment-debounce` supports debouncing for both `browser` and `server`. Only
+JavaScript/NodeJS is supported on the server side. The mechanisms for `browser`
 and `server` are similar but have a few, important distinctions. The
 package exposes three main functions, `debouncePayloads` (base),
-`debouncePayloadSync` (web), `debouncePayload` (server).
+`debouncePayloadSync` (browser), `debouncePayload` (server).
 
 ### Base
 
-`debouncePayloads` is a base function used by `web` and `server` which takes
+`debouncePayloads` is a base function used by `browser` and `server` which takes
 two payloads and runs them through the debouncing algorithm.
 
 #### Arguments
@@ -47,9 +47,9 @@ two payloads and runs them through the debouncing algorithm.
 - `nextPayload`: the other payload to compare
 - `getPayloadProperty`: a function to help retrieve the basic values of
   the payload: `userId`, `anonymousId` and `traits`. This is needed because
-  the Segment Analytics.js middleware, used in `web`, nests the payload
+  the Segment Analytics.js middleware, used in `browser`, nests the payload
   inside an `obj` object. But, this is is not true for the server side. The
-  function can simply be `lodash`'s `_get` for `server` or `` _get(payload, `obj.${prop}`) ``for`web`.
+  function can simply be `lodash`'s `_get` for `server` or `` _get(payload, `obj.${prop}`) ``for`browser`.
 
 #### Returns
 
@@ -84,9 +84,9 @@ if (nextPayload) {
 
 `debouncePayloads` does not need to be used in most cases, but is exposed to
 provide the user with flexibility if she/he needs to expand/replace the
-functionality provided by `web` and `server`.
+functionality provided by `browser` and `server`.
 
-### Web
+### Browser
 
 The integration of the frontend portion of this package with Segment is
 achieved via the [Analytics.js
@@ -117,7 +117,7 @@ sends new or updated `traits`.
 #### Example
 
 ```js
-import { debouncePayloadSync } from 'braze-segment-debounce/web';
+import { debouncePayloadSync } from 'braze-segment-debounce/browser';
 
 const _identifyDebounceSourceMiddleware = ({ payload, next, integrations }) => {
   // TODO filter Braze integration, called `AppBoy`
@@ -138,7 +138,7 @@ analytics.addSourceMiddleware(_identifyDebounceSourceMiddleware);
 `debouncePayload` is meant to work with
 [anayltics-node](https://www.npmjs.com/package/analytics-node). It does not
 require middleware like the frontend but it does rely on a caching or
-storage mechanism that the user provides. Similar to `web`, it stores
+storage mechanism that the user provides. Similar to `browser`, it stores
 previous payloads using the storage mechanism, and compares the `payload`
 to be sent to Segment/Braze against the previous versions so that it only
 sends new or updated `traits`.
