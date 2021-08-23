@@ -87,6 +87,10 @@
       "main"
     ]
   },
+  "keywords": [
+    "Segment",
+    "Braze"
+  ],
   "dependencies": {
     "debug": "^4.3.2",
     "lodash": "^4.17.21"
