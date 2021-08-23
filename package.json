@@ -1,5 +1,5 @@
 {
-  "name": "braze-segment-debounce",
+  "name": "@vivianhealth/braze-segment-debounce",
   "version": "0.0.0-development",
   "description": "Segment utilities to debounce data before it reaches the Braze destination",
   "main": "index.js",
