@@ -1,3 +1,1 @@
-import lib from './lib';
-
-export default lib;
+export { debouncePayloads } from './lib';
