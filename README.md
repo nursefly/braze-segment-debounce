@@ -60,22 +60,22 @@ two payloads and runs them through the debouncing algorithm.
 
 #### Example
 
-```
-  const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
-    previousPayload,
-    sanitizedPayload,
-    (payload, prop) => _get(payload, `obj.${prop}`),
-  );
-  if (nextPayload) {
-    const debouncedPayload = {
-      ...nextPayload,
-      obj: {
-        ...nextPayload.obj,
-        traits: newOrUpdatedTraits || nextPayload.obj.traits,
-      },
-    };
-    // do something smart with `debouncedPayload`
-  }
+```js
+const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
+  previousPayload,
+  sanitizedPayload,
+  (payload, prop) => _get(payload, `obj.${prop}`),
+);
+if (nextPayload) {
+  const debouncedPayload = {
+    ...nextPayload,
+    obj: {
+      ...nextPayload.obj,
+      traits: newOrUpdatedTraits || nextPayload.obj.traits,
+    },
+  };
+  // do something smart with `debouncedPayload`
+}
 ```
 
 #### Note
@@ -114,19 +114,19 @@ sends new or updated `traits`.
 
 #### Example
 
-```
-  const _identifyDebounceSourceMiddleware = ({ payload, next, integrations }) => {
-    // TODO filter Braze integration, called `AppBoy`
-    if (payload.type() !== 'identify') {
-      next(payload);
-      return;
-    }
-    const identifyPayload = debouncePayloadSync(payload);
-    if (identifyPayload) {
-      next(identifyPayload);
-    }
+```js
+const _identifyDebounceSourceMiddleware = ({ payload, next, integrations }) => {
+  // TODO filter Braze integration, called `AppBoy`
+  if (payload.type() !== 'identify') {
+    next(payload);
+    return;
   }
-  analytics.addSourceMiddleware(_identifyDebounceSourceMiddleware);
+  const identifyPayload = debouncePayloadSync(payload);
+  if (identifyPayload) {
+    next(identifyPayload);
+  }
+};
+analytics.addSourceMiddleware(_identifyDebounceSourceMiddleware);
 ```
 
 ### Server
@@ -154,7 +154,7 @@ sends new or updated `traits`.
 
 #### Example
 
-```
+```js
 import _isNil from 'lodash/isNil';
 import Analytics from 'analytics-node';
 import memjs from 'memjs';
