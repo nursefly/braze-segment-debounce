@@ -108,3 +108,9 @@ dist
 
 # JetBrains IDEs
 .idea
+
+# Build output
+index.js
+server.js
+browser.js
+lib

@@ -14,7 +14,7 @@ Remove any checklist items that are not relevant.
 
 ### Technical Requirements
 
--   [ ] I have reviewed my own code prior to submitting and have tested for regressions in relevant functionality
+- [ ] I have reviewed my own code prior to submitting and have tested for regressions in relevant functionality
 
 ## Proof of Functionality
 
