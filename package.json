@@ -3,18 +3,22 @@
   "version": "0.0.0-development",
   "description": "Segment utilities to debounce data before it reaches the Braze destination",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
-    "lint": "eslint '{*,{lib,docs}/**/*,__{tests,mocks}__/**/*}.js' || true",
-    "pretty": "prettier --write '{*,{lib,docs,.github}/**/*,__{tests,mocks}__/**/*}.{json,md,yml,js}'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint '{*,{src,docs}/**/*,__{tests,mocks}__/**/*}.js' || true",
+    "pretty": "prettier --write '{*,{src,docs,.github}/**/*,__{tests,mocks}__/**/*}.{json,md,yml,js}'",
     "fixcode": "yarn run pretty",
     "semantic-release": "semantic-release",
     "release": "yarn run semantic-release",
     "release-ci": "echo 'unsafe-perm = true' > ./.npmrc && yarn run semantic-release && rm -rf ./.npmrc",
     "commit": "git-cz",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "clean": "rimraf index.js browser.js server.js lib",
+    "build:only": "NODE_ENV=production babel src --out-dir .",
+    "build": "yarn run clean && yarn run build:only",
+    "prepack": "yarn run build"
   },
   "repository": "https://github.com/nursefly/braze-segment-debounce",
   "author": "Andres Restrepo <andres@thelinuxkid.com>",
@@ -43,6 +47,10 @@
     "yarn.lock"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "commitizen": "^4.2.4",
@@ -58,17 +66,18 @@
     "jest": "^27.0.6",
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
+    "rimraf": "^3.0.2",
     "semantic-release": "^17.4.5"
   },
   "engines": {
     "node": ">=12.22.4"
   },
   "lint-staged": {
-    "{*,{lib,docs}/**/*,__{tests,mocks}__/**/*}.js": [
+    "{*,{src,docs}/**/*,__{tests,mocks}__/**/*}.js": [
       "prettier --write",
       "eslint"
     ],
-    "{*,{lib,docs,.github}/**/*,__{tests,mocks}__/**/*}.{json,md,yml}": [
+    "{*,{src,docs,.github}/**/*,__{tests,mocks}__/**/*}.{json,md,yml}": [
       "prettier --write"
     ]
   },

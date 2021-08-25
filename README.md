@@ -16,7 +16,7 @@ is to provide an easy way for Segment/Braze customers to only send data
 points that are new or have changed, savings lots of $$ in the process.
 
 Although Segment provides a `Braze Debounce Identify` option on its
-dashboard under the `Source -> [Source Name] -> Settings -> Analytics.js`,
+dashboard under `Source -> [Source Name] -> Settings -> Analytics.js`,
 this option does not include debouncing against multiple previous payloads.
 The [Middleware and examples](https://github.com/segmentio/segment-braze-mobile-middleware)
 provided by Braze also suffer from the same problem. **The biggest
@@ -61,7 +61,7 @@ two payloads and runs them through the debouncing algorithm.
 #### Example
 
 ```js
-import { debouncePayloads } from 'braze-segment-debounce';
+import { debouncePayloads } from '@vivianhealth/braze-segment-debounce';
 
 const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
   previousPayload,
@@ -117,7 +117,7 @@ sends new or updated `traits`.
 #### Example
 
 ```js
-import { debouncePayloadSync } from 'braze-segment-debounce/browser';
+import { debouncePayloadSync } from '@vivianhealth/braze-segment-debounce/browser';
 
 const _identifyDebounceSourceMiddleware = ({ payload, next, integrations }) => {
   // TODO filter Braze integration, called `AppBoy`
@@ -162,7 +162,7 @@ sends new or updated `traits`.
 import _isNil from 'lodash/isNil';
 import Analytics from 'analytics-node';
 import memjs from 'memjs';
-import { debouncePayload } from 'braze-segment-debounce/server';
+import { debouncePayload } from '@vivianhealth/braze-segment-debounce/server';
 
 const segmentWriteKey = 'YOUR-SEGMENT-WRITE-KEY';
 const analytics = new Analytics(segmentWriteKey);

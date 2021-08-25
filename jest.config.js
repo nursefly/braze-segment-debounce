@@ -1,4 +1,4 @@
-const config = {
+module.exports = {
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
 
@@ -8,12 +8,9 @@ const config = {
   // The test environment that will be used for testing
   testEnvironment: 'node',
 
-  // Source files roots (limit to `lib/`)
-  roots: ['<rootDir>/lib'],
+  // Source files roots (limit to `src/`)
+  roots: ['<rootDir>/src'],
 
   // Looks for tests in the __tests__ folder or alongside js files with the .(test|spec).js
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.js$',
-  transform: {},
 };
-
-export default config;
