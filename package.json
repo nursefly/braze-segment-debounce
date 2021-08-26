@@ -35,6 +35,7 @@
     ".eslintignore",
     ".eslintrc.json",
     ".gitignore",
+    ".npmignore",
     ".prettierignore",
     ".prettierrc.json",
     "index.js",
