@@ -4,6 +4,24 @@ import debugLib from 'debug';
 import { debouncePayloads } from './index';
 import { getPayloadKey, combinePreviousPayloads } from './utils';
 
+const defaultFetchPayload = (key) => {
+  if (typeof window !== 'undefined') {
+    return window.localStorage.getItem(key);
+  }
+  throw new Error(
+    'Unable to fetch payload outside of a browser environment by default. Please specify fetchPayload.',
+  );
+};
+
+const defaultPersistPayload = (key, serializedPayload) => {
+  if (typeof window !== 'undefined') {
+    return window.localStorage.setItem(key, serializedPayload);
+  }
+  throw new Error(
+    'Unable to persist payload outside of a browser environment by default. Please specify persistPayload.',
+  );
+};
+
 /**
  * `debouncePayloadSync` provides a full solution that integrates with the
  * Analytics.js Source Middleware to debounce data before it is sent
@@ -38,8 +56,8 @@ import { getPayloadKey, combinePreviousPayloads } from './utils';
 export const debouncePayloadSync = (
   payload,
   {
-    fetchPayload = _get(global, 'localStorage.getItem'),
-    persistPayload = _get(global, 'localStorage.setItem'),
+    fetchPayload = defaultFetchPayload,
+    persistPayload = defaultPersistPayload,
   } = {},
 ) => {
   const debug = debugLib('debouncePayloadSync');
