@@ -1,5 +1,3 @@
-import _isNil from 'lodash/isNil';
-
 import { diffObject } from './utils/diffObject';
 
 /**
@@ -45,7 +43,7 @@ export const debouncePayloads = (
   getPayloadProperty,
 ) => {
   let newOrUpdatedTraits = null;
-  if (!_isNil(nextPayload) && !_isNil(previousPayload)) {
+  if (!(nextPayload == null) && !(previousPayload == null)) {
     const nextAnonymousId = getPayloadProperty(nextPayload, 'anonymousId');
     const previousAnonymousId = getPayloadProperty(
       previousPayload,
@@ -65,7 +63,7 @@ export const debouncePayloads = (
     newOrUpdatedTraits = diffObject(nextTraits, previousTraits || {}, {
       diffArray: false,
     });
-    if (_isNil(newOrUpdatedTraits)) {
+    if (newOrUpdatedTraits == null) {
       return { nextPayload: null, newOrUpdatedTraits };
     }
 
