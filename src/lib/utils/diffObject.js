@@ -1,6 +1,5 @@
 import _transform from 'lodash/transform';
 import _isEqual from 'lodash/isEqual';
-import _isEmpty from 'lodash/isEmpty';
 
 const isObject = (value) => {
   const type = typeof value;
@@ -46,5 +45,5 @@ const _diffObject = (object, base, { diffArray = true } = {}) => {
  */
 export const diffObject = (object, base, { diffArray = true } = {}) => {
   const diff = _diffObject(object, base, { diffArray });
-  return _isEmpty(diff) ? null : diff;
+  return !Object.keys(diff).length ? null : diff;
 };
