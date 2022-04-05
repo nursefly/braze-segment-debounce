@@ -1,7 +1,11 @@
 import _transform from 'lodash/transform';
 import _isEqual from 'lodash/isEqual';
-import _isObject from 'lodash/isObject';
 import _isEmpty from 'lodash/isEmpty';
+
+const isObject = (value) => {
+  const type = typeof value;
+  return value != null && (type === 'object' || type === 'function');
+};
 
 const _diffObject = (object, base, { diffArray = true } = {}) => {
   const changes = (_object, _base) => {
@@ -15,13 +19,13 @@ const _diffObject = (object, base, { diffArray = true } = {}) => {
         }
         if (diffArray) {
           result[resultKey] =
-            _isObject(value) && _isObject(_base[key])
+            isObject(value) && isObject(_base[key])
               ? changes(value, _base[key])
               : value;
         } else {
           result[resultKey] =
-            _isObject(value) &&
-            _isObject(_base[key]) &&
+            isObject(value) &&
+            isObject(_base[key]) &&
             !Array.isArray(value) &&
             !Array.isArray(_base[key])
               ? changes(value, _base[key])
