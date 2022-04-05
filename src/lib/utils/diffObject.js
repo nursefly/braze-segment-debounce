@@ -1,16 +1,36 @@
 import _transform from 'lodash/transform';
-import _isEqual from 'lodash/isEqual';
 
 const isObject = (value) => {
   const type = typeof value;
   return value != null && (type === 'object' || type === 'function');
 };
 
+const isEqual = function (a, b) {
+  if (a === b) {
+    return true;
+  } else if (isObject(a) && isObject(b)) {
+    if (Object.keys(a).length !== Object.keys(b).length) {
+      return false;
+    }
+    for (const prop in a) {
+      if (Object.prototype.hasOwnProperty.call(b, prop)) {
+        if (!isEqual(a[prop], b[prop])) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+};
+
 const _diffObject = (object, base, { diffArray = true } = {}) => {
   const changes = (_object, _base) => {
     let arrayIndexCounter = 0;
     return _transform(_object, (result, value, key) => {
-      if (!_isEqual(value, _base[key])) {
+      if (!isEqual(value, _base[key])) {
         let resultKey = key;
         if (Array.isArray(_base)) {
           resultKey = arrayIndexCounter;
