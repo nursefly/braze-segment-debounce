@@ -1,6 +1,6 @@
-import _get from 'lodash/get';
-
 import { debouncePayloads } from './index';
+
+const getPayloadProperty = (payload, prop) => payload[prop];
 
 describe('debouncePayloads', () => {
   test('debounces payload', () => {
@@ -14,7 +14,7 @@ describe('debouncePayloads', () => {
     const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
       payload,
       payload,
-      _get,
+      getPayloadProperty,
     );
     expect(nextPayload).toBe(null);
     expect(newOrUpdatedTraits).toBe(null);
@@ -31,7 +31,7 @@ describe('debouncePayloads', () => {
     const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
       payload,
       payload,
-      _get,
+      getPayloadProperty,
     );
     expect(nextPayload).toBe(null);
     expect(newOrUpdatedTraits).toBe(null);
@@ -47,7 +47,7 @@ describe('debouncePayloads', () => {
     const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
       payload,
       payload,
-      _get,
+      getPayloadProperty,
     );
     expect(nextPayload).toBe(null);
     expect(newOrUpdatedTraits).toBe(null);
@@ -72,7 +72,7 @@ describe('debouncePayloads', () => {
     const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
       payload1,
       payload2,
-      _get,
+      getPayloadProperty,
     );
     expect(nextPayload).toEqual(payload2);
     expect(newOrUpdatedTraits).toBe(null);
@@ -96,7 +96,7 @@ describe('debouncePayloads', () => {
     const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
       payload1,
       payload2,
-      _get,
+      getPayloadProperty,
     );
     expect(nextPayload).toEqual(payload2);
     expect(newOrUpdatedTraits).toEqual({
@@ -123,7 +123,7 @@ describe('debouncePayloads', () => {
     const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
       payload1,
       payload2,
-      _get,
+      getPayloadProperty,
     );
     expect(nextPayload).toEqual(payload2);
     expect(newOrUpdatedTraits).toEqual({
@@ -147,7 +147,7 @@ describe('debouncePayloads', () => {
     const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
       payload1,
       payload2,
-      _get,
+      getPayloadProperty,
     );
     expect(nextPayload).toEqual(payload2);
     expect(newOrUpdatedTraits).toEqual({

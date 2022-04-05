@@ -1,4 +1,3 @@
-import _get from 'lodash/get';
 import debugLib from 'debug';
 
 import { debouncePayloads } from './index';
@@ -61,7 +60,7 @@ export const debouncePayloadSync = (
   } = {},
 ) => {
   const debug = debugLib('debouncePayloadSync');
-  const getPayloadProperty = (payload, prop) => _get(payload, `obj.${prop}`);
+  const getPayloadProperty = (payload, prop) => payload?.obj?.[prop];
 
   const key = getPayloadKey(payload, getPayloadProperty);
   let parsedPreviousPayload = null;
