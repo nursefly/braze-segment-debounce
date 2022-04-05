@@ -1,6 +1,5 @@
 import _transform from 'lodash/transform';
 import _isEqual from 'lodash/isEqual';
-import _isArray from 'lodash/isArray';
 import _isObject from 'lodash/isObject';
 import _isEmpty from 'lodash/isEmpty';
 
@@ -10,7 +9,7 @@ const _diffObject = (object, base, { diffArray = true } = {}) => {
     return _transform(_object, (result, value, key) => {
       if (!_isEqual(value, _base[key])) {
         let resultKey = key;
-        if (_isArray(_base)) {
+        if (Array.isArray(_base)) {
           resultKey = arrayIndexCounter;
           arrayIndexCounter += 1;
         }
@@ -23,8 +22,8 @@ const _diffObject = (object, base, { diffArray = true } = {}) => {
           result[resultKey] =
             _isObject(value) &&
             _isObject(_base[key]) &&
-            !_isArray(value) &&
-            !_isArray(_base[key])
+            !Array.isArray(value) &&
+            !Array.isArray(_base[key])
               ? changes(value, _base[key])
               : value;
         }
