@@ -55,6 +55,24 @@ export const merge = (target, source) => {
 };
 
 /**
+ * Like reduce but works on objects and arrays, guessing the type of the
+ * accumulator if not specified.
+ * @param {object} target The object to transform
+ * @param {function} fn The function to apply to the object
+ * @param {object} accumulator The optional initial accumulator
+ * @return {object} The transformed object
+ */
+export const transform = (object, fn, accumulator = null) => {
+  if (accumulator == null) {
+    accumulator = Array.isArray(object) ? [] : {};
+  }
+  for (const prop in object) {
+    fn(accumulator, object[prop], prop);
+  }
+  return accumulator;
+};
+
+/**
  * Creates the cache/storage key from the payload using one of `userId`,
  * `anonymousId` or the literal `no-id`, in that order.
  * @param {Object} payload The object from which to derive the key

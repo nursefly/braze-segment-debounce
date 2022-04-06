@@ -1,10 +1,9 @@
-import _transform from 'lodash/transform';
-import { isObject, isEqual } from './index';
+import { isObject, isEqual, transform } from './index';
 
 const _diffObject = (object, base, { diffArray = true } = {}) => {
   const changes = (_object, _base) => {
     let arrayIndexCounter = 0;
-    return _transform(_object, (result, value, key) => {
+    return transform(_object, (result, value, key) => {
       if (!isEqual(value, _base[key])) {
         let resultKey = key;
         if (Array.isArray(_base)) {
