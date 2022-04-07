@@ -1,5 +1,3 @@
-import debugLib from 'debug';
-
 import { debouncePayloads } from './index';
 import { getPayloadKey, combinePreviousPayloads } from './utils';
 
@@ -59,7 +57,6 @@ export const debouncePayloadSync = (
     persistPayload = defaultPersistPayload,
   } = {},
 ) => {
-  const debug = debugLib('debouncePayloadSync');
   const getPayloadProperty = (payload, prop) => payload?.obj?.[prop];
 
   const key = getPayloadKey(payload, getPayloadProperty);
@@ -70,7 +67,9 @@ export const debouncePayloadSync = (
       parsedPreviousPayload = JSON.parse(rawPreviousPayload);
     }
   } catch {
-    debug('failed to fetch previous payload for debouncing');
+    console.error(
+      'debouncePayloadSync: failed to fetch previous payload for debouncing',
+    );
   }
   const previousPayload = parsedPreviousPayload || {};
 
