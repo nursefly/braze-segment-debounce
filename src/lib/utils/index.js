@@ -1,4 +1,76 @@
-import _merge from 'lodash/merge';
+/**
+ * Checks if value is an Object
+ * @param {*} value The object to check
+ * @return {boolean} Whether the value is an object or not
+ */
+export const isObject = (value) => {
+  const type = typeof value;
+  return value != null && (type === 'object' || type === 'function');
+};
+
+/**
+ * Checks if two values are deeply equal
+ * @param {*} a The first value to check
+ * @param {*} b The second value to check
+ * @return {boolean} Whether the two values are deeply equal
+ */
+export const isEqual = function (a, b) {
+  if (a === b) {
+    return true;
+  } else if (isObject(a) && isObject(b)) {
+    if (Object.keys(a).length !== Object.keys(b).length) {
+      return false;
+    }
+    for (const prop in a) {
+      if (Object.prototype.hasOwnProperty.call(b, prop)) {
+        if (!isEqual(a[prop], b[prop])) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Deeply merges a source object into a target object
+ * @param {object} target The target object
+ * @param {object} source The source object
+ * @return {object} The deeply merged objects
+ */
+export const merge = (target, source) => {
+  for (const prop in source) {
+    const targetValue = target[prop];
+    const sourceValue = source[prop];
+    if (isObject(targetValue) && isObject(sourceValue)) {
+      target[prop] = merge(targetValue, sourceValue);
+      continue;
+    }
+    target[prop] = source[prop];
+  }
+  return target;
+};
+
+/**
+ * Like reduce but works on objects and arrays, guessing the type of the
+ * accumulator if not specified.
+ * @param {object} target The object to transform
+ * @param {function} fn The function to apply to the object
+ * @param {object} accumulator The optional initial accumulator
+ * @return {object} The transformed object
+ */
+export const transform = (object, fn, accumulator = null) => {
+  if (accumulator == null) {
+    accumulator = Array.isArray(object) ? [] : {};
+  }
+  for (const prop in object) {
+    fn(accumulator, object[prop], prop);
+  }
+  return accumulator;
+};
 
 /**
  * Creates the cache/storage key from the payload using one of `userId`,
@@ -20,7 +92,7 @@ export const getPayloadKey = (payload, getPayloadProperty) => {
  */
 export const combinePreviousPayloads = (previousPayloads) => {
   return previousPayloads.reduce((combinedPayload, previousPayload) => {
-    combinedPayload = _merge(combinedPayload, previousPayload);
+    combinedPayload = merge(combinedPayload, previousPayload);
     return combinedPayload;
   }, {});
 };

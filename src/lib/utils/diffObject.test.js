@@ -1,5 +1,6 @@
-import _cloneDeep from 'lodash/cloneDeep';
 import { diffObject } from './diffObject';
+
+const cloneDeep = (obj) => JSON.parse(JSON.stringify(obj));
 
 test('diffs different objects', () => {
   const obj1 = {
@@ -56,8 +57,8 @@ test('diffs different objects', () => {
     },
   };
 
-  const obj1Clone = _cloneDeep(obj1);
-  const obj2Clone = _cloneDeep(obj2);
+  const obj1Clone = cloneDeep(obj1);
+  const obj2Clone = cloneDeep(obj2);
 
   const diff = diffObject(obj2, obj1);
   expect(diff).toEqual({
@@ -137,8 +138,8 @@ test('does not diff equal objects', () => {
     tests: undefined, // eslint-disable-line no-undefined
   };
 
-  const obj1Clone = _cloneDeep(obj1);
-  const obj2Clone = _cloneDeep(obj2);
+  const obj1Clone = cloneDeep(obj1);
+  const obj2Clone = cloneDeep(obj2);
 
   const diff = diffObject(obj2, obj1);
   expect(diff).toEqual(null);

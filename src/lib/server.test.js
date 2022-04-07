@@ -141,6 +141,7 @@ describe('debouncePayload', () => {
       traits: {
         firstName: 'Test',
         lastName: 'User',
+        emails: ['test@user.com', 'user@test.com'],
       },
     };
     const payload2 = {
@@ -169,6 +170,7 @@ describe('debouncePayload', () => {
         ...payload2.traits,
         firstName: 'Test',
         lastName: 'User',
+        emails: ['test@user.com', 'user@test.com'],
       },
     });
     expect(debouncedPayload1).toEqual(payload1);

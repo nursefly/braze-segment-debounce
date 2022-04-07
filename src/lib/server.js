@@ -1,4 +1,3 @@
-import _get from 'lodash/get';
 import debugLib from 'debug';
 
 import { debouncePayloads } from './index';
@@ -78,7 +77,9 @@ export const debouncePayload = async (
   } = {},
 ) => {
   const debug = debugLib('debouncePayload');
-  const key = getPayloadKey(payload, _get);
+  const getPayloadProperty = (payload, prop) => payload[prop];
+
+  const key = getPayloadKey(payload, getPayloadProperty);
   let parsedPreviousPayload = null;
   try {
     const rawPreviousPayload = await fetchPayload(key);
@@ -96,7 +97,7 @@ export const debouncePayload = async (
   const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
     previousPayload,
     sanitizedPayload,
-    _get,
+    getPayloadProperty,
   );
 
   if (nextPayload) {
