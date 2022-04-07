@@ -1,5 +1,3 @@
-import debugLib from 'debug';
-
 import { debouncePayloads } from './index';
 import { getPayloadKey, combinePreviousPayloads } from './utils';
 
@@ -76,7 +74,6 @@ export const debouncePayload = async (
     deserializePayload = deserializeFromJSONForCache,
   } = {},
 ) => {
-  const debug = debugLib('debouncePayload');
   const getPayloadProperty = (payload, prop) => payload[prop];
 
   const key = getPayloadKey(payload, getPayloadProperty);
@@ -87,7 +84,9 @@ export const debouncePayload = async (
       parsedPreviousPayload = deserializePayload(rawPreviousPayload);
     }
   } catch (storeError) {
-    debug('failed to fetch previous payload for debouncing');
+    console.error(
+      'debouncePayload: failed to fetch previous payload for debouncing',
+    );
   }
   const previousPayload = parsedPreviousPayload || {};
 
@@ -112,7 +111,9 @@ export const debouncePayload = async (
     try {
       await persistPayload(key, serializePayload(previousPayloadToStore));
     } catch {
-      debug('failed to store previous payload for debouncing');
+      console.error(
+        'debouncePayload: failed to store previous payload for debouncing',
+      );
     }
     return debouncedPayload;
   }

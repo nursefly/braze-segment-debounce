@@ -101,7 +101,5 @@
     "Segment",
     "Braze"
   ],
-  "dependencies": {
-    "debug": "^4.3.2"
-  }
+  "dependencies": {}
 }
