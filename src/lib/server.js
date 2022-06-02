@@ -29,7 +29,7 @@ const deserializeFromJSONForCache = (serializedValue) => {
  * `traits`.
  * @param {Object} payload The data to be sent to Segment/Braze
  * @param {Function} fetchPayload A function to retrieve previous payloads
- * @param {Function} storePayload A function to store previous payloads
+ * @param {Function} persistPayload A function to store previous payloads
  * @param {Function} options.serializePayload An optional function to
  * override the default serializer
  * @param {Function} options.deserializePayload An optional function to

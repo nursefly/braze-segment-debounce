@@ -107,7 +107,7 @@ sends new or updated `traits`.
 
 - `payload`: the data provided by the middleware
 - `options.fetchPayload`: an optional function to override `localStorage.getItem`
-- `options.storePayload`: an optional function to override `localStorage.setItem`
+- `options.persistPayload`: an optional function to override `localStorage.setItem`
 
 #### Returns
 
@@ -147,7 +147,7 @@ sends new or updated `traits`.
 
 - `payload`: the data to be sent to Segment/Braze
 - `fetchPayload`: a function to retrieve previous payloads
-- `storePayload`: a function to store previous payloads
+- `persistPayload`: a function to store previous payloads
 - `options.serializePayload`: an optional function to override the default serializer
 - `options.deserializePayload`: an optional function to override the default deserializer
 
