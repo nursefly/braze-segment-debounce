@@ -28,7 +28,7 @@ const defaultPersistPayload = (key, serializedPayload) => {
  * only sends new or updated `traits`.
  * @param {Object} payload The data provided by the Analytics.js middleware
  * @param {Function} options.fetchPayload An optional function to override `localStorage.getItem`
- * @param {Function} options.storePayload An optional function to override `localStorage.setItem`
+ * @param {Function} options.persistPayload An optional function to override `localStorage.setItem`
  * @return {Object} The debounced payload to send to Braze. If `null`,
  * there is no new or updated data to send.
  * @example
