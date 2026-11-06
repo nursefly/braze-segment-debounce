@@ -1,9 +1,15 @@
-import { debouncePayload } from './server';
+import {
+  debouncePayload,
+  type FetchPayload,
+  type PersistPayload,
+} from './server';
 
 describe('debouncePayload', () => {
-  let storage;
-  let persistPayload;
-  let fetchPayload;
+  let storage: Record<string, Buffer>;
+  let persistPayload: PersistPayload<Buffer>;
+  let fetchPayload: FetchPayload<Buffer>;
+  const parseStored = (key: string): unknown =>
+    JSON.parse(storage[key]?.toString('utf8') ?? 'null');
   beforeEach(() => {
     storage = {};
     fetchPayload = async (k) => storage[k] || null;
@@ -11,8 +17,52 @@ describe('debouncePayload', () => {
       storage[k] = i;
     };
   });
-  afterEach(() => {
-    storage = null;
+
+  test('uses the default serializers for an empty options object', async () => {
+    const payload = { userId: 1, traits: { firstName: 'Test' } };
+    const options = {} as never;
+
+    const first = await debouncePayload(
+      payload,
+      fetchPayload,
+      persistPayload,
+      options,
+    );
+    const second = await debouncePayload(
+      payload,
+      fetchPayload,
+      persistPayload,
+      options,
+    );
+
+    expect(first).toEqual(payload);
+    expect(second).toBe(null);
+    expect(storage['1-previousSegmentPayload']).toBeInstanceOf(Buffer);
+  });
+
+  test('fills in the missing serializer when only one is passed', async () => {
+    const payload = { userId: 1, traits: { firstName: 'Test' } };
+    const serializePayload = jest.fn((value: unknown) =>
+      Buffer.from(JSON.stringify(value), 'utf8'),
+    );
+    const options = { serializePayload } as never;
+
+    const first = await debouncePayload(
+      payload,
+      fetchPayload,
+      persistPayload,
+      options,
+    );
+    const second = await debouncePayload(
+      payload,
+      fetchPayload,
+      persistPayload,
+      options,
+    );
+
+    expect(first).toEqual(payload);
+    expect(second).toBe(null);
+    expect(serializePayload).toHaveBeenCalled();
   });
 
   test('debounces payload', async () => {
@@ -38,7 +88,7 @@ describe('debouncePayload', () => {
     );
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload);
+    expect(parseStored(key)).toEqual(payload);
     expect(debouncedPayload1).toEqual(payload);
     expect(debouncedPayload2).toBe(null);
   });
@@ -66,7 +116,7 @@ describe('debouncePayload', () => {
     );
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload);
+    expect(parseStored(key)).toEqual(payload);
     expect(debouncedPayload1).toEqual(payload);
     expect(debouncedPayload2).toBe(null);
   });
@@ -92,7 +142,7 @@ describe('debouncePayload', () => {
     );
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload);
+    expect(parseStored(key)).toEqual(payload);
     expect(debouncedPayload1).toEqual(payload);
     expect(debouncedPayload2).toBe(null);
   });
@@ -128,7 +178,7 @@ describe('debouncePayload', () => {
     );
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload2);
+    expect(parseStored(key)).toEqual(payload2);
     expect(debouncedPayload1).toEqual(payload1);
     expect(debouncedPayload2).toEqual(payload2);
   });
@@ -164,7 +214,7 @@ describe('debouncePayload', () => {
     );
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual({
+    expect(parseStored(key)).toEqual({
       ...payload2,
       traits: {
         ...payload2.traits,
@@ -213,7 +263,7 @@ describe('debouncePayload', () => {
     );
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload2);
+    expect(parseStored(key)).toEqual(payload2);
     expect(debouncedPayload1).toEqual(payload1);
     expect(debouncedPayload2).toEqual(payload3);
   });
@@ -246,7 +296,7 @@ describe('debouncePayload', () => {
     );
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload2);
+    expect(parseStored(key)).toEqual(payload2);
     expect(debouncedPayload1).toEqual(payload1);
     expect(debouncedPayload2).toEqual(payload2);
   });
@@ -263,7 +313,7 @@ describe('debouncePayload', () => {
       },
     }));
 
-    const debouncedPayloads = [];
+    const debouncedPayloads: unknown[] = [];
     for (const payload of payloads) {
       const debouncedPayload = await debouncePayload(
         payload,
@@ -274,7 +324,7 @@ describe('debouncePayload', () => {
     }
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payloads[3]);
+    expect(parseStored(key)).toEqual(payloads[3]);
     expect(debouncedPayloads[0]).toEqual({
       userId,
       traits: {
@@ -331,7 +381,7 @@ describe('debouncePayload', () => {
     );
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload2);
+    expect(parseStored(key)).toEqual(payload2);
     expect(debouncedPayload1).toEqual(payload1);
     expect(debouncedPayload2).toEqual(payload2);
     expect(debouncedPayload3).toEqual(payload1);

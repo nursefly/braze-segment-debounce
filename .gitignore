@@ -110,7 +110,8 @@ dist
 .idea
 
 # Build output
-index.js
-server.js
-browser.js
-lib
+/index.js
+/server.js
+/browser.js
+/*.d.ts
+/lib

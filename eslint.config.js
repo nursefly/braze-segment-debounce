@@ -3,10 +3,19 @@ const jest = require('eslint-plugin-jest');
 const prettier = require('eslint-config-prettier');
 
 module.exports = [
-  { ignores: ['lib/**', 'index.js', 'browser.js', 'server.js', 'coverage/**'] },
-  ...neostandard({ noStyle: true }),
   {
-    files: ['src/**/*.test.js'],
+    ignores: [
+      'lib/**',
+      'index.js',
+      'browser.js',
+      'server.js',
+      '*.d.ts',
+      'coverage/**',
+    ],
+  },
+  ...neostandard({ ts: true, noStyle: true }),
+  {
+    files: ['src/**/*.test.ts'],
     ...jest.configs['flat/recommended'],
   },
   {

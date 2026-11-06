@@ -1,6 +1,9 @@
-import { debouncePayloads } from './index';
+import { debouncePayloads, type GetPayloadProperty } from './index';
 
-const getPayloadProperty = (payload, prop) => payload[prop];
+type Payload = { userId?: unknown; anonymousId?: unknown; traits?: unknown };
+
+const getPayloadProperty: GetPayloadProperty<Payload> = (payload, prop) =>
+  payload[prop];
 
 describe('debouncePayloads', () => {
   test('debounces payload', () => {
@@ -31,6 +34,16 @@ describe('debouncePayloads', () => {
     const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
       payload,
       payload,
+      getPayloadProperty,
+    );
+    expect(nextPayload).toBe(null);
+    expect(newOrUpdatedTraits).toBe(null);
+  });
+
+  test('produces no diff for non-object traits', () => {
+    const { nextPayload, newOrUpdatedTraits } = debouncePayloads(
+      { userId: 1, traits: 'previous' },
+      { userId: 1, traits: 'next' },
       getPayloadProperty,
     );
     expect(nextPayload).toBe(null);

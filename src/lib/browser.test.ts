@@ -1,18 +1,23 @@
-import { debouncePayloadSync, clearPreviousPayloads } from './browser';
+import {
+  debouncePayloadSync,
+  clearPreviousPayloads,
+  type BrowserStorageOptions,
+} from './browser';
+
+const globalWithWindow = globalThis as { window?: unknown };
 
 describe('debouncePayloadSync', () => {
-  let storage;
-  let persistPayload;
-  let fetchPayload;
+  let storage: Record<string, string>;
+  let persistPayload: NonNullable<BrowserStorageOptions['persistPayload']>;
+  let fetchPayload: NonNullable<BrowserStorageOptions['fetchPayload']>;
+  const parseStored = (key: string): unknown =>
+    JSON.parse(storage[key] ?? 'null');
   beforeEach(() => {
     storage = {};
     fetchPayload = (k) => storage[k] || null;
     persistPayload = (k, i) => {
       storage[k] = i;
     };
-  });
-  afterEach(() => {
-    storage = null;
   });
 
   test('debounces payload', () => {
@@ -38,7 +43,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload);
+    expect(parseStored(key)).toEqual(payload);
     expect(debouncedPayload1).toEqual(payload);
     expect(debouncedPayload2).toBe(null);
   });
@@ -66,7 +71,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload);
+    expect(parseStored(key)).toEqual(payload);
     expect(debouncedPayload1).toEqual(payload);
     expect(debouncedPayload2).toBe(null);
   });
@@ -92,7 +97,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload);
+    expect(parseStored(key)).toEqual(payload);
     expect(debouncedPayload1).toEqual(payload);
     expect(debouncedPayload2).toBe(null);
   });
@@ -130,7 +135,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload2);
+    expect(parseStored(key)).toEqual(payload2);
     expect(debouncedPayload1).toEqual(payload1);
     expect(debouncedPayload2).toEqual(payload2);
   });
@@ -167,7 +172,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual({
+    expect(parseStored(key)).toEqual({
       obj: {
         ...payload2.obj,
         traits: {
@@ -221,7 +226,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload2);
+    expect(parseStored(key)).toEqual(payload2);
     expect(debouncedPayload1).toEqual(payload1);
     expect(debouncedPayload2).toEqual(payload3);
   });
@@ -256,7 +261,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload2);
+    expect(parseStored(key)).toEqual(payload2);
     expect(debouncedPayload1).toEqual(payload1);
     expect(debouncedPayload2).toEqual(payload2);
   });
@@ -280,7 +285,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payloads[3]);
+    expect(parseStored(key)).toEqual(payloads[3]);
     expect(debouncedPayloads[0]).toEqual({
       obj: {
         userId,
@@ -341,7 +346,7 @@ describe('debouncePayloadSync', () => {
     });
 
     expect(Object.keys(storage).length).toBe(1);
-    expect(JSON.parse(storage[key])).toEqual(payload2);
+    expect(parseStored(key)).toEqual(payload2);
     expect(debouncedPayload1).toEqual(payload1);
     expect(debouncedPayload2).toEqual(payload2);
     expect(debouncedPayload3).toEqual(payload1);
@@ -350,21 +355,27 @@ describe('debouncePayloadSync', () => {
 });
 
 describe('debouncePayloadSync storage eviction', () => {
+  test('drops a payload without obj and stores nothing', () => {
+    const storage = makeStorage();
+    expect(debouncePayloadSync({} as never, storage)).toBe(null);
+    expect(storage.items).toEqual({});
+  });
+
   const makeStorage = () => {
-    const items = {};
+    const items: Record<string, string> = {};
     return {
       items,
-      fetchPayload: (k) => items[k] || null,
-      persistPayload: (k, v) => {
+      fetchPayload: (k: string) => items[k] || null,
+      persistPayload: (k: string, v: string) => {
         items[k] = v;
       },
       listPayloadKeys: () => Object.keys(items),
-      removePayload: (k) => {
+      removePayload: (k: string) => {
         delete items[k];
       },
     };
   };
-  const payloadFor = (userId, anonymousId) => ({
+  const payloadFor = (userId: number, anonymousId: string) => ({
     obj: { userId, anonymousId, traits: { firstName: `User ${userId}` } },
   });
 
@@ -396,7 +407,7 @@ describe('debouncePayloadSync storage eviction', () => {
       storage,
     );
 
-    expect(second.obj.traits).toEqual({ lastName: 'New' });
+    expect(second?.obj?.traits).toEqual({ lastName: 'New' });
     expect(Object.keys(storage.items)).toEqual(['1-previousSegmentPayload']);
   });
 
@@ -412,7 +423,7 @@ describe('debouncePayloadSync storage eviction', () => {
 
     try {
       const debounced = debouncePayloadSync(payloadFor(2, 'anon-2'), storage);
-      expect(debounced.obj.userId).toBe(2);
+      expect(debounced?.obj?.userId).toBe(2);
       expect(Object.keys(storage.items)).toEqual([]);
       expect(consoleError).toHaveBeenCalledTimes(1);
     } finally {
@@ -437,7 +448,9 @@ describe('debouncePayloadSync storage eviction', () => {
       storage,
     );
 
-    expect(JSON.parse(storage.items['1-previousSegmentPayload'])).toEqual({
+    expect(
+      JSON.parse(storage.items['1-previousSegmentPayload'] ?? 'null'),
+    ).toEqual({
       obj: {
         userId: 1,
         anonymousId: 'anon-1',
@@ -451,7 +464,7 @@ describe('debouncePayloadSync storage eviction', () => {
     const touchLocalStorage = jest.fn(() => {
       throw new Error('must not be called');
     });
-    global.window = {
+    globalWithWindow.window = {
       localStorage: {
         length: 0,
         key: touchLocalStorage,
@@ -466,7 +479,7 @@ describe('debouncePayloadSync storage eviction', () => {
       debouncePayloadSync(payloadFor(1, 'anon-1'), custom);
       debouncePayloadSync(payloadFor(2, 'anon-2'), custom);
     } finally {
-      delete global.window;
+      delete globalWithWindow.window;
     }
 
     expect(touchLocalStorage).not.toHaveBeenCalled();
@@ -477,17 +490,20 @@ describe('debouncePayloadSync storage eviction', () => {
   });
 
   test('cleans localStorage when only fetch is overridden', () => {
-    const items = { '1-previousSegmentPayload': '{}', other: 'kept' };
-    global.window = {
+    const items: Record<string, string> = {
+      '1-previousSegmentPayload': '{}',
+      other: 'kept',
+    };
+    globalWithWindow.window = {
       localStorage: {
         get length() {
           return Object.keys(items).length;
         },
-        key: (index) => Object.keys(items)[index],
-        setItem: (k, v) => {
+        key: (index: number) => Object.keys(items)[index] ?? null,
+        setItem: (k: string, v: string) => {
           items[k] = v;
         },
-        removeItem: (k) => {
+        removeItem: (k: string) => {
           delete items[k];
         },
       },
@@ -497,7 +513,7 @@ describe('debouncePayloadSync storage eviction', () => {
         fetchPayload: () => null,
       });
     } finally {
-      delete global.window;
+      delete globalWithWindow.window;
     }
 
     expect(Object.keys(items).sort()).toEqual([
@@ -523,7 +539,7 @@ describe('debouncePayloadSync storage eviction', () => {
             listPayloadKeys: storage.listPayloadKeys,
           },
         );
-        expect(debounced.obj.userId).toBe(2);
+        expect(debounced?.obj?.userId).toBe(2);
         expect(Object.keys(storage.items).sort()).toEqual([
           '1-previousSegmentPayload',
           '2-previousSegmentPayload',
@@ -565,8 +581,10 @@ describe('debouncePayloadSync storage eviction', () => {
       storage,
     );
 
-    expect(debounced.obj.traits).toEqual({ lastName: 'New' });
-    expect(JSON.parse(storage.items['1-previousSegmentPayload'])).toEqual({
+    expect(debounced?.obj?.traits).toEqual({ lastName: 'New' });
+    expect(
+      JSON.parse(storage.items['1-previousSegmentPayload'] ?? 'null'),
+    ).toEqual({
       obj: {
         userId: 1,
         anonymousId: 'anon-1',
@@ -583,14 +601,14 @@ describe('debouncePayloadSync storage eviction', () => {
 
     const debounced = debouncePayloadSync(payloadFor(1, 'anon-1'), storage);
 
-    expect(debounced.obj.userId).toBe(1);
+    expect(debounced?.obj?.userId).toBe(1);
     expect(Object.keys(storage.items)).toEqual(['1-previousSegmentPayload']);
   });
 });
 
 describe('clearPreviousPayloads', () => {
   const makeStorage = () => {
-    const items = {
+    const items: Record<string, string> = {
       '1-previousSegmentPayload': '{}',
       '2-previousSegmentPayload': '{}',
       'anon-3-previousSegmentPayload': '{}',
@@ -599,7 +617,7 @@ describe('clearPreviousPayloads', () => {
     return {
       items,
       listPayloadKeys: () => Object.keys(items),
-      removePayload: (k) => {
+      removePayload: (k: string) => {
         delete items[k];
       },
     };
@@ -632,17 +650,17 @@ describe('clearPreviousPayloads', () => {
   });
 
   test('uses window.localStorage by default', () => {
-    const items = {
+    const items: Record<string, string> = {
       '1-previousSegmentPayload': '{}',
       other: 'kept',
     };
-    global.window = {
+    globalWithWindow.window = {
       localStorage: {
         get length() {
           return Object.keys(items).length;
         },
-        key: (index) => Object.keys(items)[index],
-        removeItem: (k) => {
+        key: (index: number) => Object.keys(items)[index] ?? null,
+        removeItem: (k: string) => {
           delete items[k];
         },
       },
@@ -651,7 +669,7 @@ describe('clearPreviousPayloads', () => {
       expect(clearPreviousPayloads()).toEqual(['1-previousSegmentPayload']);
       expect(Object.keys(items)).toEqual(['other']);
     } finally {
-      delete global.window;
+      delete globalWithWindow.window;
     }
   });
 });

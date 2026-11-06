@@ -36,6 +36,8 @@ and `server` are similar but have a few, important distinctions. The
 package exposes three main functions, `debouncePayloads` (base),
 `debouncePayloadSync` (browser), `debouncePayload` (server).
 
+The package is written in TypeScript and ships its own type declarations.
+
 ### Base
 
 `debouncePayloads` is a base function used by `browser` and `server` which takes
@@ -190,8 +192,9 @@ sends new or updated `traits`.
 - `payload`: the data to be sent to Segment/Braze
 - `fetchPayload`: a function to retrieve previous payloads
 - `persistPayload`: a function to store previous payloads
-- `options.serializePayload`: an optional function to override the default serializer
-- `options.deserializePayload`: an optional function to override the default deserializer
+- `options.serializePayload` and `options.deserializePayload`: optional, but
+  pass them together. Without them, stored values are `Buffer`s of JSON and
+  `fetchPayload` must resolve to a `Buffer` (or `null`).
 
 #### Returns
 
@@ -209,7 +212,7 @@ import { debouncePayload } from '@vivianhealth/braze-segment-debounce/server';
 const segmentWriteKey = 'YOUR-SEGMENT-WRITE-KEY';
 const analytics = new Analytics(segmentWriteKey);
 const cache = memjs.Client.create();
-const fetchPayload = async (k) => cache.get(k);
+const fetchPayload = async (k) => (await cache.get(k)).value;
 const persistPayload = async (k, v) => {
   await cache.set(k, v, { expires: 3600 });
 };

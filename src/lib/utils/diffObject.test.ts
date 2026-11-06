@@ -1,6 +1,6 @@
 import { diffObject } from './diffObject';
 
-const cloneDeep = (obj) => JSON.parse(JSON.stringify(obj));
+const cloneDeep = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
 
 test('diffs different objects', () => {
   const obj1 = {
