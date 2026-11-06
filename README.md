@@ -49,7 +49,7 @@ two payloads and runs them through the debouncing algorithm.
   the payload: `userId`, `anonymousId` and `traits`. This is needed because
   the Segment Analytics.js middleware, used in `browser`, nests the payload
   inside an `obj` object. But, this is is not true for the server side. The
-  function can simply be `lodash`'s `_get` for `server` or `` _get(payload, `obj.${prop}`) ``for`browser`.
+  function can simply be `lodash`'s `_get` for `server` or ``_get(payload, `obj.${prop}`)`` for `browser`.
 
 #### Returns
 

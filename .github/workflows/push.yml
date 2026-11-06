@@ -1,23 +1,43 @@
 name: CI/CD
 on: push
 
+permissions:
+  contents: read
+
 jobs:
-  test-and-release:
-    name: Test and Release
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repo at the push ref
-      - uses: actions/checkout@v1
-      # Install deps
-      - name: Install
-        run: yarn
-      # Run tests
-      - name: Test
-        run: yarn test
-      # Attempt release if we're on main
-      - name: Release
-        if: github.ref == 'refs/heads/main'
-        run: yarn run release-ci
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm install -g npm@11.19.1
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  release:
+    name: Release
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm install -g npm@11.19.1
+      - run: npm ci
+      - run: npm run release-ci
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
