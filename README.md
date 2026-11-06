@@ -108,11 +108,31 @@ sends new or updated `traits`.
 - `payload`: the data provided by the middleware
 - `options.fetchPayload`: an optional function to override `localStorage.getItem`
 - `options.persistPayload`: an optional function to override `localStorage.setItem`
+- `options.listPayloadKeys`: an optional function to override listing `localStorage` keys
+- `options.removePayload`: an optional function to override `localStorage.removeItem`
+
+`listPayloadKeys` and `removePayload` must be overridden together (a lone
+one is logged and ignored). If you override `persistPayload` without them,
+stale payloads are never removed from your store.
 
 #### Returns
 
 - `nextPayload || null`: the debounced payload to send to Braze. If `null`,
   there is no new or updated data to send.
+
+#### Storage
+
+Only `userId`, `anonymousId` and `traits` of the merged previous payloads are
+stored, under `${userId || anonymousId || 'no-id'}-previousSegmentPayload`.
+
+Only one previous payload is kept: the one for the current `userId` (or
+`anonymousId`). Persisting a payload removes every other stored payload,
+and a failed persist (for example `QuotaExceededError`) removes every stored
+payload so the next identify is sent in full. Analytics.js assigns a new
+`anonymousId` whenever the `userId` changes, which already bypasses the
+debounce, so payloads for other identities can never produce a cache hit.
+With a custom `persistPayload` and no `listPayloadKeys`/`removePayload`,
+nothing is removed.
 
 #### Example
 
@@ -132,6 +152,28 @@ const _identifyDebounceSourceMiddleware = ({ payload, next, integrations }) => {
 };
 analytics.addSourceMiddleware(_identifyDebounceSourceMiddleware);
 ```
+
+#### `clearPreviousPayloads`
+
+Removes every stored payload, optionally keeping the one for a single
+`userId` or `anonymousId`. Call it when the browser's identity is reset
+(logout, or an auth link for a different user) so the next identity's
+`localStorage` writes never compete with stale payloads for space.
+
+```js
+import { clearPreviousPayloads } from '@vivianhealth/braze-segment-debounce/browser';
+
+// On logout
+analytics.reset();
+clearPreviousPayloads();
+
+// Before identifying a different user than the one Analytics.js has stored
+clearPreviousPayloads({ exceptId: nextUserId });
+```
+
+Arguments: `options.exceptId` (a `userId` or `anonymousId` whose payload is
+kept), `options.listPayloadKeys` and `options.removePayload` (overrides for
+`localStorage`, passed together). Returns the removed keys.
 
 ### Server
 

@@ -72,6 +72,14 @@ export const transform = (object, fn, accumulator = null) => {
   return accumulator;
 };
 
+export const PAYLOAD_KEY_SUFFIX = '-previousSegmentPayload';
+
+export const getPayloadKeyForId = (id) =>
+  `${id || 'no-id'}${PAYLOAD_KEY_SUFFIX}`;
+
+export const isPayloadKey = (key) =>
+  typeof key === 'string' && key.endsWith(PAYLOAD_KEY_SUFFIX);
+
 /**
  * Creates the cache/storage key from the payload using one of `userId`,
  * `anonymousId` or the literal `no-id`, in that order.
@@ -81,7 +89,7 @@ export const transform = (object, fn, accumulator = null) => {
 export const getPayloadKey = (payload, getPayloadProperty) => {
   const userId = getPayloadProperty(payload, 'userId');
   const anonymousId = getPayloadProperty(payload, 'anonymousId');
-  return `${userId || anonymousId || 'no-id'}-previousSegmentPayload`;
+  return getPayloadKeyForId(userId || anonymousId);
 };
 
 /**

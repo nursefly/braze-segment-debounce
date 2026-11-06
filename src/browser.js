@@ -1,1 +1,1 @@
-export { debouncePayloadSync } from './lib/browser';
+export { debouncePayloadSync, clearPreviousPayloads } from './lib/browser';
